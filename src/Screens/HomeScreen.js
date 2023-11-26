@@ -1,37 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  FlatList,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, Text, View, FlatList, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import Icon from "react-native-vector-icons/FontAwesome";
-
-const api_key = "61accf04d2e2a5f2c66ca2088b94a404";
-const link = "https://api.themoviedb.org/3";
-
-const MovieItem = ({ item }) => {
-  const navigation = useNavigation();
-
-  return (
-    <TouchableOpacity
-      style={styles.movieContainer}
-      onPress={() =>
-        navigation.navigate("DetailScreen", { movieDetails: item })
-      }
-    >
-      <Image
-        style={styles.poster_path}
-        source={{ uri: `https://image.tmdb.org/t/p/w200${item.poster_path}` }}
-      />
-    </TouchableOpacity>
-  );
-};
+import MovieItem from "../Components/MovieItem";
+import fetchData, { search } from "../Services/CallAPI";
+import Header from "../Components/Header";
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -46,35 +18,30 @@ export default function HomeScreen() {
   const [popularSeries, setPopularSeries] = useState([]);
   const [topRatedSeries, setTopRatedSeries] = useState([]);
 
+  const [searchInput, setSearchInput] = useState("");
+
   useEffect(() => {
-    fetch(`${link}/movie/popular?api_key=${api_key}&language=fr-FR`)
-      .then((response) => response.json())
+    fetchData("movie/popular")
       .then((data) => setPopularMovies(data.results))
       .catch((error) =>
         console.error("Erreur de récupération des films populaires", error)
       );
-
-    fetch(`${link}/movie/upcoming?api_key=${api_key}&language=fr-FR`)
-      .then((response) => response.json())
+    fetchData("movie/upcoming")
       .then((data) => setUpcomingMovies(data.results))
       .catch((error) =>
         console.error("Erreur de récupération des films à venir", error)
       );
-
-    fetch(`${link}/movie/top_rated?api_key=${api_key}&language=fr-FR`)
-      .then((response) => response.json())
+    fetchData("movie/top_rated")
       .then((data) => setTopRatedMovies(data.results))
       .catch((error) =>
         console.error("Erreur de récupération des films les mieux notés", error)
       );
-    fetch(`${link}/movie/now_playing?api_key=${api_key}&language=fr-FR`)
-      .then((response) => response.json())
+    fetchData("movie/now_playing")
       .then((data) => setActualMovies(data.results))
       .catch((error) =>
         console.error("Erreur de récupération des films les mieux notés", error)
       );
-    fetch(`${link}/tv/airing_today?api_key=${api_key}&language=fr-FR`)
-      .then((response) => response.json())
+    fetchData("tv/airing_today")
       .then((data) => setAiringTodaySeries(data.results))
       .catch((error) =>
         console.error(
@@ -82,8 +49,7 @@ export default function HomeScreen() {
           error
         )
       );
-    fetch(`${link}/tv/on_the_air?api_key=${api_key}&language=fr-FR`)
-      .then((response) => response.json())
+    fetchData("tv/on_the_air")
       .then((data) => setOnTheAirSeries(data.results))
       .catch((error) =>
         console.error(
@@ -91,14 +57,12 @@ export default function HomeScreen() {
           error
         )
       );
-    fetch(`${link}/tv/popular?api_key=${api_key}&language=fr-FR`)
-      .then((response) => response.json())
+    fetchData("tv/popular")
       .then((data) => setPopularSeries(data.results))
       .catch((error) =>
         console.error("Erreur de récupération des séries TV populaires", error)
       );
-    fetch(`${link}/tv/top_rated?api_key=${api_key}&language=fr-FR`)
-      .then((response) => response.json())
+    fetchData("tv/top_rated")
       .then((data) => setTopRatedSeries(data.results))
       .catch((error) =>
         console.error(
@@ -110,15 +74,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchBarre}>
-        <TextInput style={styles.searchInput} placeholder="Rechercher" />
-        <View style={styles.searchSeparator}></View>
-        <TouchableOpacity style={styles.searchButton}>
-          <View>
-            <Icon name="search" style={styles.searchIcon} />
-          </View>
-        </TouchableOpacity>
-      </View>
+      <Header />
       <ScrollView>
         <Text style={styles.title}>Actuellement au cinéma</Text>
         <FlatList
@@ -126,9 +82,7 @@ export default function HomeScreen() {
           data={actualMovies}
           horizontal={true}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <MovieItem item={item} navigation={navigation} />
-          )}
+          renderItem={({ item }) => <MovieItem item={item} />}
         />
         <Text style={styles.title}>Films Populaires</Text>
         <FlatList
@@ -136,9 +90,7 @@ export default function HomeScreen() {
           data={popularMovies}
           horizontal={true}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <MovieItem item={item} navigation={navigation} />
-          )}
+          renderItem={({ item }) => <MovieItem item={item} />}
         />
         <Text style={styles.title}>Films à Venir</Text>
         <FlatList
@@ -146,9 +98,7 @@ export default function HomeScreen() {
           data={upcomingMovies}
           horizontal={true}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <MovieItem item={item} navigation={navigation} />
-          )}
+          renderItem={({ item }) => <MovieItem item={item} />}
         />
         <Text style={styles.title}>Les mieux notés</Text>
         <FlatList
@@ -156,9 +106,7 @@ export default function HomeScreen() {
           data={topRatedMovies}
           horizontal={true}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <MovieItem item={item} navigation={navigation} />
-          )}
+          renderItem={({ item }) => <MovieItem item={item} />}
         />
         <Text style={styles.title}>Diffusés Aujourd'hui</Text>
         <FlatList
@@ -166,9 +114,7 @@ export default function HomeScreen() {
           data={airingTodaySeries}
           horizontal={true}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <MovieItem item={item} navigation={navigation} />
-          )}
+          renderItem={({ item }) => <MovieItem item={item} />}
         />
         <Text style={styles.title}>En cours de diffusion</Text>
         <FlatList
@@ -176,9 +122,7 @@ export default function HomeScreen() {
           data={onTheAirSeries}
           horizontal={true}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <MovieItem item={item} navigation={navigation} />
-          )}
+          renderItem={({ item }) => <MovieItem item={item} />}
         />
         <Text style={styles.title}>Séries Populaires</Text>
         <FlatList
@@ -186,9 +130,7 @@ export default function HomeScreen() {
           data={popularSeries}
           horizontal={true}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <MovieItem item={item} navigation={navigation} />
-          )}
+          renderItem={({ item }) => <MovieItem item={item} />}
         />
         <Text style={styles.title}>Séries les mieux notées</Text>
         <FlatList
@@ -196,9 +138,7 @@ export default function HomeScreen() {
           data={topRatedSeries}
           horizontal={true}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <MovieItem item={item} navigation={navigation} />
-          )}
+          renderItem={({ item }) => <MovieItem item={item} />}
         />
       </ScrollView>
     </View>
@@ -209,42 +149,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "rgba(190, 190, 190, 1)",
-  },
-  searchBarre: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "rgba(230, 230, 230, 1)",
-    width: "90%",
-    marginVertical: 10,
-    borderRadius: 15,
-    color: "rgba(255, 255, 255, 1)",
-  },
-  searchInput: {
-    flex: 14,
-    borderWidth: 0,
-    padding: 15,
-    color: "rgba(255, 255, 255, 1)",
-  },
-  searchSeparator: {
-    flex: 0.1,
-    height: "70%",
-    backgroundColor: "rgba(190, 190, 190, 1)",
-  },
-  searchButton: {
-    flex: 1,
-    height: "100%",
-    padding: 15,
-  },
-  searchIcon: {
-    alignSelf: "center",
-    fontSize: 18,
+    // backgroundColor: "rgba(190, 190, 190, 1)",
   },
   title: {
     alignSelf: "center",
     fontSize: 24,
     fontWeight: "bold",
-    color: "white",
+    color: "grey",
     marginTop: 20,
     marginBottom: 20,
   },
@@ -262,10 +173,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 5,
     color: "rgba(255, 255, 255, 1)",
-  },
-  poster_path: {
-    width: 120,
-    height: 180,
-    borderRadius: 10,
   },
 });

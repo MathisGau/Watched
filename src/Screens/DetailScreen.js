@@ -1,13 +1,34 @@
-import { StyleSheet, Text, View, Image, ScrollView } from "react-native";
-
-const api_key = "61accf04d2e2a5f2c66ca2088b94a404";
-const link = "https://api.themoviedb.org/3";
+import { useNavigation } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  Image,
+  ScrollView,
+  FlatList,
+} from "react-native";
+import MovieItem from "../Components/MovieItem";
+import * as CallAPI from "../Services/CallAPI";
+import Header from "../Components/Header";
 
 export default DetailScreen = ({ route }) => {
   const { movieDetails } = route.params;
+  const navigation = useNavigation();
+
+  const [recommendations, setRecommendations] = useState([]);
+
+  useEffect(() => {
+    CallAPI.fetchMovieRecommendations(movieDetails.id)
+      .then((data) => setRecommendations(data.results))
+      .catch((error) =>
+        console.error("Erreur de récupération des films populaires", error)
+      );
+  }, []);
 
   return (
     <ScrollView style={styles.container}>
+      <Header></Header>
       <Image
         style={styles.path}
         source={{
@@ -24,7 +45,17 @@ export default DetailScreen = ({ route }) => {
         <Text style={styles.note}>
           Note : {movieDetails.vote_average.toFixed(1)}/10
         </Text>
+        <Text style={styles.title}>Recommendations</Text>
       </View>
+      <FlatList
+        style={styles.recommendationsContainer}
+        data={recommendations}
+        horizontal={true}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <MovieItem item={item} navigation={navigation} />
+        )}
+      />
     </ScrollView>
   );
 };
@@ -65,5 +96,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "white",
     marginTop: 10,
+  },
+  recommendationsContainer: {
+    marginHorizontal: 5,
+    marginBottom: 30,
   },
 });

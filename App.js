@@ -1,8 +1,9 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet } from "react-native";
-import HomeScreen from "./Component/Screens/HomeScreen";
-import DetailScreen from "./Component/Screens/DetailScreen";
+import HomeScreen from "./src/Screens/HomeScreen";
+import DetailScreen from "./src/Screens/DetailScreen";
+import SearchScreen from "./src/Screens/SearchScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -24,6 +25,14 @@ export default function App() {
           style={styles.DetailScreen}
           options={{
             title: "Détails",
+          }}
+        />
+        <Stack.Screen
+          name="SearchScreen"
+          component={SearchScreen}
+          style={styles.SearchScreen}
+          options={{
+            title: "Recherche",
           }}
         />
       </Stack.Navigator>
