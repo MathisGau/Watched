@@ -9,18 +9,26 @@ const Tab = createBottomTabNavigator();
 export default function BottomTabNavigation() {
   return (
     <Tab.Navigator
-      tabBarOptions={{
-        activeTintColor: "rgba(225, 205, 0, 1)",
-        inactiveTintColor: "white",
+      screenOptions={{
         style: { backgroundColor: "rgba(30, 30, 30, 1)" },
+        tabBarActiveTintColor: "rgba(225, 205, 0, 1)",
+        tabBarInactiveTintColor: "white",
+        tabBarStyle: [
+          {
+            display: "flex",
+          },
+          null,
+        ],
       }}
     >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
         options={{
+          headerShown: false,
+          title: "Home",
           tabBarIcon: ({ color, size }) => (
-            <Icon name="home" size={size} color={color} />
+            <Icon name="home" size={size * 1.15} color={color} />
           ),
         }}
       />
@@ -28,8 +36,10 @@ export default function BottomTabNavigation() {
         name="Account"
         component={AccountScreen}
         options={{
+          headerShown: false,
+          title: "Account",
           tabBarIcon: ({ color, size }) => (
-            <Icon name="user" size={size} color={color} />
+            <Icon name="user" size={size * 1.15} color={color} />
           ),
         }}
       />

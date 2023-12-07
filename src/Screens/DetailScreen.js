@@ -20,12 +20,19 @@ export default DetailScreen = ({ route }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [isSaveToWatchLatered, setIsSaveToWatchLatered] = useState(false);
   const [recommendations, setRecommendations] = useState([]);
+  const [newOverview, setNewOverview] = useState(null);
 
   useEffect(() => {
     CallAPI.fetchMovieRecommendations(movieDetails.id)
-      .then((data) => setRecommendations(data.results))
+      .then((data) => {
+        if (data && data.results) {
+          setRecommendations(data.results);
+        } else {
+          console.log("Aucune recommandation disponible pour ce film/épisode.");
+        }
+      })
       .catch((error) =>
-        console.error("Erreur de récupération des films populaires", error)
+        console.log("Erreur de récupération des films populaires", error)
       );
     const fetchSavedData = async () => {
       const savedIsLiked = await getFromStorage(`isLiked_${movieDetails.id}`);
@@ -43,12 +50,71 @@ export default DetailScreen = ({ route }) => {
     };
 
     fetchSavedData();
+
+    const fetchNewOverview = async () => {
+      if (movieDetails.overview == "") {
+        try {
+          const enResponse = await fetch(
+            `https://api.themoviedb.org/3/tv/${movieDetails.id}?api_key=61accf04d2e2a5f2c66ca2088b94a404`
+          );
+          const enData = await enResponse.json();
+          if (enData && enData.overview) {
+            setNewOverview(enData.overview);
+          } else {
+            console.log(
+              "Aucune description en anglais disponible pour cette série."
+            );
+          }
+        } catch (error) {
+          console.log(
+            "Erreur de récupération de la description en enançais",
+            error
+          );
+        }
+      }
+    };
+    fetchNewOverview();
   }, []);
+
+  const renderReleaseDate = () => {
+    if (movieDetails.release_date && movieDetails.release_date !== "") {
+      return (
+        <Text style={styles.releaseDate}>
+          Date de sortie : {movieDetails.release_date}
+        </Text>
+      );
+    }
+    return null;
+  };
+
+  const renderOverview = () => {
+    const overview = movieDetails.overview;
+    if (overview && overview !== "") {
+      return (
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.description}>{overview}</Text>
+        </View>
+      );
+    } else {
+      return (
+        <View style={styles.descriptionContainer}>
+          <Text style={styles.description}>{newOverview}</Text>
+        </View>
+      );
+    }
+  };
+
+  const renderTitle = () => {
+    return (
+      <Text style={styles.title}>
+        {movieDetails.original_name || movieDetails.title}
+      </Text>
+    );
+  };
 
   const saveToStorage = async (key, value) => {
     try {
       await AsyncStorage.setItem(key, JSON.stringify(value));
-      console.log(`Données enregistrées avec succès pour la clé ${key}`);
     } catch (error) {
       console.error(
         `Erreur lors de l'enregistrement des données pour la clé ${key}:`,
@@ -139,14 +205,10 @@ export default DetailScreen = ({ route }) => {
           </View>
         </View>
         <View style={styles.separator} />
-        <Text style={styles.title}>{movieDetails.title}</Text>
-        <Text style={styles.releaseDate}>
-          Date de sortie : {movieDetails.release_date}
-        </Text>
-        <View style={styles.descriptionContainer}>
-          <Text style={styles.description}>{movieDetails.overview}</Text>
-        </View>
-        {recommendations.length > 0 && (
+        {renderTitle()}
+        {renderReleaseDate()}
+        {renderOverview()}
+        {recommendations && recommendations.length > 0 && (
           <>
             <Text style={styles.titleRecommendations}>Recommendations</Text>
             <FlatList
@@ -172,7 +234,7 @@ const styles = StyleSheet.create({
   },
   path: {
     width: "100%",
-    height: 300,
+    height: 500,
     resizeMode: "cover",
   },
   contentContainer: {

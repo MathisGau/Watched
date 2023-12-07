@@ -43,9 +43,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     paddingBottom: 50,
+    backgroundColor: "rgba(30, 30, 30, 1)",
   },
   message: {
-    color: "grey",
+    color: "white",
     fontSize: 20,
     textAlign: "center",
     paddingVertical: 20,
