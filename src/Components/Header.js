@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
     flex: 10,
     borderWidth: 0,
     color: "black",
-    fontSize: 16,
+    fontSize: 14,
     paddingVertical: 15,
     paddingHorizontal: 10,
   },
@@ -77,6 +77,6 @@ const styles = StyleSheet.create({
   },
   Icon: {
     alignSelf: "center",
-    fontSize: 24,
+    fontSize: 20,
   },
 });

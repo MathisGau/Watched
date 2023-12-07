@@ -18,8 +18,6 @@ export default function HomeScreen() {
   const [popularSeries, setPopularSeries] = useState([]);
   const [topRatedSeries, setTopRatedSeries] = useState([]);
 
-  const [searchInput, setSearchInput] = useState("");
-
   useEffect(() => {
     fetchData("movie/popular")
       .then((data) => setPopularMovies(data.results))
@@ -149,13 +147,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    // backgroundColor: "rgba(190, 190, 190, 1)",
+    backgroundColor: "rgba(30, 30, 30, 1)",
   },
   title: {
     alignSelf: "center",
     fontSize: 24,
     fontWeight: "bold",
-    color: "grey",
+    color: "rgba(1255, 1255, 1255, 1)",
     marginTop: 20,
     marginBottom: 20,
   },
