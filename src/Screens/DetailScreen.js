@@ -136,44 +136,36 @@ export default DetailScreen = ({ route }) => {
     }
   };
 
-  const handleLikePress = async () => {
-    const updatedIsLiked = !isLiked;
-    await saveToStorage(`isLiked_${movieDetails.id}`, updatedIsLiked);
-    setIsLiked(updatedIsLiked);
+  const handlePress = async (key, state, setState, storageKey) => {
+    const updatedState = !state;
+    await saveToStorage(`${key}_${movieDetails.id}`, updatedState);
+    setState(updatedState);
 
-    const allLikedMovies = (await getFromStorage("likedMovies")) || [];
-    const movieIndex = allLikedMovies.findIndex(
+    const allMovies = (await getFromStorage(storageKey)) || [];
+    const movieIndex = allMovies.findIndex(
       (movie) => movie.id === movieDetails.id
     );
-    if (updatedIsLiked && movieIndex === -1) {
-      const updatedLikedMovies = [...allLikedMovies, movieDetails];
-      await saveToStorage("likedMovies", updatedLikedMovies);
-    } else if (!updatedIsLiked && movieIndex !== -1) {
-      allLikedMovies.splice(movieIndex, 1);
-      await saveToStorage("likedMovies", allLikedMovies);
+
+    if (updatedState && movieIndex === -1) {
+      const updatedMovies = [...allMovies, movieDetails];
+      await saveToStorage(storageKey, updatedMovies);
+    } else if (!updatedState && movieIndex !== -1) {
+      allMovies.splice(movieIndex, 1);
+      await saveToStorage(storageKey, allMovies);
     }
   };
 
-  const handleSaveToWatchLaterPress = async () => {
-    const updatedIsSaveToWatchLatered = !isSaveToWatchLatered;
-    await saveToStorage(
-      `isSaveToWatchLatered_${movieDetails.id}`,
-      updatedIsSaveToWatchLatered
-    );
-    setIsSaveToWatchLatered(updatedIsSaveToWatchLatered);
+  const handleLikePress = async () => {
+    await handlePress("isLiked", isLiked, setIsLiked, "likedMovies");
+  };
 
-    const allWatchLaterMovies =
-      (await getFromStorage("watchLaterMovies")) || [];
-    const movieIndex = allWatchLaterMovies.findIndex(
-      (movie) => movie.id === movieDetails.id
+  const handleSaveToWatchLaterPress = async () => {
+    await handlePress(
+      "isSaveToWatchLatered",
+      isSaveToWatchLatered,
+      setIsSaveToWatchLatered,
+      "watchLaterMovies"
     );
-    if (updatedIsSaveToWatchLatered && movieIndex === -1) {
-      const updatedSaveToWatchLater = [...allWatchLaterMovies, movieDetails];
-      await saveToStorage("watchLaterMovies", updatedSaveToWatchLater);
-    } else if (!updatedIsSaveToWatchLatered && movieIndex !== -1) {
-      allWatchLaterMovies.splice(movieIndex, 1);
-      await saveToStorage("watchLaterMovies", allWatchLaterMovies);
-    }
   };
 
   return (
