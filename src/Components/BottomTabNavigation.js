@@ -13,12 +13,10 @@ export default function BottomTabNavigation() {
         style: { backgroundColor: "rgba(30, 30, 30, 1)" },
         tabBarActiveTintColor: "rgba(225, 205, 0, 1)",
         tabBarInactiveTintColor: "white",
-        tabBarStyle: [
-          {
-            display: "flex",
-          },
-          null,
-        ],
+        tabBarStyle: {
+          borderTopWidth: 1,
+          borderTopColor: "rgba(225, 205, 0, 1)",
+        },
       }}
     >
       <Tab.Screen

@@ -178,6 +178,7 @@ export default DetailScreen = ({ route }) => {
 
   return (
     <ScrollView style={styles.container}>
+      <View style={styles.topSeparator} />
       <Image
         style={styles.path}
         source={{
@@ -231,6 +232,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "rgba(30, 30, 30, 1)",
+  },
+  topSeparator: {
+    height: 1,
+    width: "100%",
+    backgroundColor: "rgba(225, 205, 0, 1)",
   },
   path: {
     width: "100%",

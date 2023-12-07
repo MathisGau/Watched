@@ -20,6 +20,7 @@ export default function SearchScreen({ route }) {
 
   return (
     <View style={styles.container}>
+      <View style={styles.separator} />
       <Header />
       <FlatList
         style={styles.searchList}
@@ -44,6 +45,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingBottom: 50,
     backgroundColor: "rgba(30, 30, 30, 1)",
+  },
+  separator: {
+    height: 1,
+    width: "100%",
+    backgroundColor: "rgba(225, 205, 0, 1)",
   },
   message: {
     color: "white",

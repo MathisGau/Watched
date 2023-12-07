@@ -11,9 +11,10 @@ const MainStackNavigator = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen
-        name="HomeTab"
+        name="HomeScreen"
         component={BottomTabNavigation}
         options={{
+          title: "Home",
           headerTitle: () => (
             <View
               style={{

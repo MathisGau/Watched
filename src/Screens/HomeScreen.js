@@ -72,6 +72,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.separator} />
       <Header />
       <ScrollView>
         <Text style={styles.title}>Actuellement au cinéma</Text>
@@ -148,6 +149,11 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     backgroundColor: "rgba(30, 30, 30, 1)",
+  },
+  separator: {
+    height: 1,
+    width: "100%",
+    backgroundColor: "rgba(225, 205, 0, 1)",
   },
   title: {
     alignSelf: "center",

@@ -85,6 +85,7 @@ export default function AccountScreen() {
 
   return (
     <View style={styles.screen}>
+      <View style={styles.separator} />
       <Text style={styles.title}>Favoris</Text>
       <View style={styles.container}>
         {likedMovies.length > 0 ? (
@@ -159,6 +160,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(30, 30, 30, 1)",
     alignItems: "center",
     justifyContent: "center",
+  },
+  separator: {
+    height: 1,
+    width: "100%",
+    backgroundColor: "rgba(225, 205, 0, 1)",
   },
   container: {
     flex: 1,
