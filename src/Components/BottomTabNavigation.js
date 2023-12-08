@@ -1,6 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import Icon from "react-native-vector-icons/Feather";
+import Icon from "react-native-vector-icons/Octicons";
 import HomeScreen from "../Screens/HomeScreen";
 import AccountScreen from "../Screens/AccountScreen";
 
@@ -37,7 +37,7 @@ export default function BottomTabNavigation() {
           headerShown: false,
           title: "Account",
           tabBarIcon: ({ color, size }) => (
-            <Icon name="user" size={size * 1.1} color={color} />
+            <Icon name="person" size={size * 1.1} color={color} />
           ),
         }}
       />

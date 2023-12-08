@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 28,
     fontWeight: "bold",
-    marginVertical: 20,
+    marginVertical: 10,
   },
   movieTitle: {
     color: "white",

@@ -74,24 +74,24 @@ export default DetailScreen = ({ route }) => {
       }
     };
     fetchNewOverview();
-    const fetchGenreIDs = async () => {
-      try {
-        const genreResponses = await Promise.all(
-          movieDetails.genre_ids.map(async (genreId) => {
-            const response = await fetch(
-              `https://api.themoviedb.org/3/genre/${genreId}?api_key=61accf04d2e2a5f2c66ca2088b94a404&language=fr-FR`
-            );
-            return response.json();
-          })
-        );
+    // const fetchGenreIDs = async () => {
+    //   try {
+    //     const genreResponses = await Promise.all(
+    //       movieDetails.genre_ids.map(async (genreId) => {
+    //         const response = await fetch(
+    //           `https://api.themoviedb.org/3/genre/${genreId}?api_key=61accf04d2e2a5f2c66ca2088b94a404&language=fr-FR`
+    //         );
+    //         return response.json();
+    //       })
+    //     );
 
-        const genreNames = genreResponses.map((data) => data.name);
-        setGenres(genreNames);
-      } catch (error) {
-        console.error("Erreur lors de la récupération des données", error);
-      }
-    };
-    fetchGenreIDs();
+    //     const genreNames = genreResponses.map((data) => data.name);
+    //     setGenres(genreNames);
+    //   } catch (error) {
+    //     console.error("Erreur lors de la récupération des données", error);
+    //   }
+    // };
+    // fetchGenreIDs();
   }, []);
 
   const renderReleaseDate = () => {
@@ -178,13 +178,13 @@ export default DetailScreen = ({ route }) => {
             uri: `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`,
           }}
         />
-        <View style={styles.genresContainer}>
+        {/* <View style={styles.genresContainer}>
           {genres.map((genre, index) => (
             <TouchableOpacity key={index} style={styles.genreButton}>
               <Text style={styles.genreText}>{genre}</Text>
             </TouchableOpacity>
           ))}
-        </View>
+        </View> */}
         <View style={styles.contentContainer}>
           <View style={styles.headerContent}>
             <View style={styles.noteContainer}>
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     backgroundColor: "rgba(225, 200, 0, 0.2)",
     borderColor: "rgba(225, 205, 0, 1)",
-    borderRadius: "50%",
+    borderRadius: 50,
     top: 60,
     left: 20,
     zIndex: 1,
