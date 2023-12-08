@@ -46,20 +46,22 @@ const MainStackNavigator = () => {
         name="DetailScreen"
         component={DetailScreen}
         options={{
-          headerTitle: () => (
-            <Image
-              source={require("../../assets/logo.png")}
-              style={{
-                width: 120,
-                height: 40,
-                resizeMode: "contain",
-                tintColor: "rgba(225, 205, 0, 1)",
-              }}
-            />
-          ),
-          headerStyle: {
-            backgroundColor: "rgba(30, 30, 30, 1)",
-          },
+          headerShown: false,
+          title: "",
+          // headerTitle: () => (
+          //   <Image
+          //     source={require("../../assets/logo.png")}
+          //     style={{
+          //       width: 120,
+          //       height: 40,
+          //       resizeMode: "contain",
+          //       tintColor: "rgba(225, 205, 0, 1)",
+          //     }}
+          //   />
+          // ),
+          // headerStyle: {
+          //   backgroundColor: "rgba(30, 30, 30, 1)",
+          // },
         }}
       />
       <Stack.Screen

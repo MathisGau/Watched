@@ -12,7 +12,8 @@ import {
 import MovieItem from "../Components/MovieItem";
 import * as CallAPI from "../Services/CallAPI";
 import Icon from "react-native-vector-icons/AntDesign";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import getFromStorage from "../Components/Storage/getFromStorage";
+import saveToStorage from "../Components/Storage/saveToStorage";
 
 export default DetailScreen = ({ route }) => {
   const { movieDetails } = route.params;
@@ -21,8 +22,10 @@ export default DetailScreen = ({ route }) => {
   const [isSaveToWatchLatered, setIsSaveToWatchLatered] = useState(false);
   const [recommendations, setRecommendations] = useState([]);
   const [newOverview, setNewOverview] = useState(null);
+  const [genres, setGenres] = useState([]);
 
   useEffect(() => {
+    console.log("movieDetails", movieDetails);
     CallAPI.fetchMovieRecommendations(movieDetails.id)
       .then((data) => {
         if (data && data.results) {
@@ -66,14 +69,29 @@ export default DetailScreen = ({ route }) => {
             );
           }
         } catch (error) {
-          console.log(
-            "Erreur de récupération de la description en enançais",
-            error
-          );
+          console.log("Erreur de récupération de la description", error);
         }
       }
     };
     fetchNewOverview();
+    const fetchGenreIDs = async () => {
+      try {
+        const genreResponses = await Promise.all(
+          movieDetails.genre_ids.map(async (genreId) => {
+            const response = await fetch(
+              `https://api.themoviedb.org/3/genre/${genreId}?api_key=61accf04d2e2a5f2c66ca2088b94a404&language=fr-FR`
+            );
+            return response.json();
+          })
+        );
+
+        const genreNames = genreResponses.map((data) => data.name);
+        setGenres(genreNames);
+      } catch (error) {
+        console.error("Erreur lors de la récupération des données", error);
+      }
+    };
+    fetchGenreIDs();
   }, []);
 
   const renderReleaseDate = () => {
@@ -112,30 +130,6 @@ export default DetailScreen = ({ route }) => {
     );
   };
 
-  const saveToStorage = async (key, value) => {
-    try {
-      await AsyncStorage.setItem(key, JSON.stringify(value));
-    } catch (error) {
-      console.error(
-        `Erreur lors de l'enregistrement des données pour la clé ${key}:`,
-        error
-      );
-    }
-  };
-
-  const getFromStorage = async (key) => {
-    try {
-      const value = await AsyncStorage.getItem(key);
-      return value != null ? JSON.parse(value) : null;
-    } catch (error) {
-      console.error(
-        `Erreur lors de la récupération des données pour la clé ${key}:`,
-        error
-      );
-      return null;
-    }
-  };
-
   const handlePress = async (key, state, setState, storageKey) => {
     const updatedState = !state;
     await saveToStorage(`${key}_${movieDetails.id}`, updatedState);
@@ -168,55 +162,74 @@ export default DetailScreen = ({ route }) => {
     );
   };
 
+  const navigateToHome = () => {
+    navigation.navigate("HomeScreen");
+  };
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.topSeparator} />
-      <Image
-        style={styles.path}
-        source={{
-          uri: `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`,
-        }}
-      />
-      <View style={styles.contentContainer}>
-        <View style={styles.headerContent}>
-          <View style={styles.noteContainer}>
-            <Text style={styles.note}>
-              {movieDetails.vote_average.toFixed(1)}/10
-            </Text>
-          </View>
-          <View style={styles.headerRightContainer}>
-            <TouchableOpacity onPress={handleLikePress}>
-              <Icon name="heart" size={30} color={isLiked ? "red" : "white"} />
+    <>
+      <TouchableOpacity style={styles.homeButton} onPress={navigateToHome}>
+        <Icon name="arrowleft" size={30} color="rgba(225, 205, 0, 1)" />
+      </TouchableOpacity>
+      <ScrollView style={styles.container}>
+        <Image
+          style={styles.path}
+          source={{
+            uri: `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`,
+          }}
+        />
+        <View style={styles.genresContainer}>
+          {genres.map((genre, index) => (
+            <TouchableOpacity key={index} style={styles.genreButton}>
+              <Text style={styles.genreText}>{genre}</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={handleSaveToWatchLaterPress}>
-              <Icon
-                name="clockcircleo"
-                size={30}
-                color={isSaveToWatchLatered ? "yellow" : "white"}
-              />
-            </TouchableOpacity>
-          </View>
+          ))}
         </View>
-        <View style={styles.separator} />
-        {renderTitle()}
-        {renderReleaseDate()}
-        {renderOverview()}
-        {recommendations && recommendations.length > 0 && (
-          <>
-            <Text style={styles.titleRecommendations}>Recommendations</Text>
-            <FlatList
-              style={styles.recommendationsContainer}
-              data={recommendations}
-              horizontal={true}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item }) => (
-                <MovieItem item={item} navigation={navigation} />
-              )}
-            />
-          </>
-        )}
-      </View>
-    </ScrollView>
+        <View style={styles.contentContainer}>
+          <View style={styles.headerContent}>
+            <View style={styles.noteContainer}>
+              <Text style={styles.note}>
+                {movieDetails.vote_average.toFixed(1)}/10
+              </Text>
+            </View>
+            <View style={styles.headerRightContainer}>
+              <TouchableOpacity onPress={handleLikePress}>
+                <Icon
+                  name="heart"
+                  size={30}
+                  color={isLiked ? "red" : "white"}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleSaveToWatchLaterPress}>
+                <Icon
+                  name="clockcircleo"
+                  size={30}
+                  color={isSaveToWatchLatered ? "yellow" : "white"}
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+          <View style={styles.separator} />
+          {renderTitle()}
+          {renderReleaseDate()}
+          {renderOverview()}
+          {recommendations && recommendations.length > 0 && (
+            <>
+              <Text style={styles.titleRecommendations}>Recommendations</Text>
+              <FlatList
+                style={styles.recommendationsContainer}
+                data={recommendations}
+                horizontal={true}
+                keyExtractor={(item) => item.id.toString()}
+                renderItem={({ item }) => (
+                  <MovieItem item={item} navigation={navigation} />
+                )}
+              />
+            </>
+          )}
+        </View>
+      </ScrollView>
+    </>
   );
 };
 
@@ -224,11 +237,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "rgba(30, 30, 30, 1)",
-  },
-  topSeparator: {
-    height: 1,
-    width: "100%",
-    backgroundColor: "rgba(225, 205, 0, 1)",
   },
   path: {
     width: "100%",
@@ -299,7 +307,40 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   recommendationsContainer: {
-    marginHorizontal: 5,
+    marginHorizontal: 0,
     marginBottom: 30,
+  },
+  homeButton: {
+    position: "absolute",
+    padding: 5,
+    borderWidth: 2,
+    backgroundColor: "rgba(225, 200, 0, 0.2)",
+    borderColor: "rgba(225, 205, 0, 1)",
+    borderRadius: "50%",
+    top: 60,
+    left: 20,
+    zIndex: 1,
+  },
+  genresContainer: {
+    position: "absolute",
+    gap: 15,
+    top: 60,
+    right: 15,
+    backgroundColor: "rgba(255, 255, 255, 0)",
+    flexDirection: "column",
+    alignContent: "center",
+    zIndex: 1,
+  },
+  genreButton: {
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    alignItems: "center",
+    padding: 10,
+    borderRadius: 10,
+    zIndex: 1,
+  },
+  genreText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 12,
   },
 });

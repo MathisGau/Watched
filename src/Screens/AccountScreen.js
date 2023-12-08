@@ -7,8 +7,8 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
+import getFromStorage from "../Components/Storage/getFromStorage";
 
 export default function AccountScreen() {
   const [likedMovies, setLikedMovies] = useState([]);
@@ -33,19 +33,6 @@ export default function AccountScreen() {
 
     fetchSavedData();
   }, [isFocused]);
-
-  const getFromStorage = async (key) => {
-    try {
-      const value = await AsyncStorage.getItem(key);
-      return value != null ? JSON.parse(value) : [];
-    } catch (error) {
-      console.error(
-        `Erreur lors de la récupération des données pour la clé ${key}:`,
-        error
-      );
-      return [];
-    }
-  };
 
   const navigateToDetails = async (item) => {
     try {
