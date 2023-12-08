@@ -25,7 +25,6 @@ export default DetailScreen = ({ route }) => {
   const [genres, setGenres] = useState([]);
 
   useEffect(() => {
-    console.log("movieDetails", movieDetails);
     CallAPI.fetchMovieRecommendations(movieDetails.id)
       .then((data) => {
         if (data && data.results) {
